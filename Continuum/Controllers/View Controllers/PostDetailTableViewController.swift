@@ -12,9 +12,8 @@ class PostDetailTableViewController: UITableViewController, UITextFieldDelegate 
 
     var postLandingPad: Post? {
         didSet {
-            DispatchQueue.main.async {
-                self.updateViews()
-            }
+            loadViewIfNeeded()
+            self.updateViews()
         }
     }
     
@@ -41,10 +40,10 @@ class PostDetailTableViewController: UITableViewController, UITextFieldDelegate 
                 let post = self.postLandingPad else {return}
             if comment != "" {
                 PostController.sharedInstance.addComment(text: comment, post: post, completion: { (comment) in
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                    }
                 })
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             }
         }
         
