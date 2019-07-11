@@ -20,6 +20,7 @@ class PostListTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        requestSync(completion: nil)
         searchBar.delegate = self
         
     }

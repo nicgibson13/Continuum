@@ -16,6 +16,7 @@ class Post: SearchableRecord {
     var timestamp: Date
     var comments: [Comment]
     var photoData: Data?
+    var commentCount: Int
     var recordID: CKRecord.ID
     var photo: UIImage? {
         get {
@@ -29,32 +30,44 @@ class Post: SearchableRecord {
         }
     }
     
-    init(photo: UIImage, caption: String, timestamp: Date = Date(), comments: [Comment] = [], recordID: CKRecord.ID = CKRecord.ID(recordName: UUID().uuidString)) {
+    init(photo: UIImage, caption: String, timestamp: Date = Date(), comments: [Comment] = [], commentCount: Int = 0, recordID: CKRecord.ID = CKRecord.ID(recordName: UUID().uuidString)) {
         self.caption = caption
         self.timestamp = timestamp
         self.comments = comments
+        self.commentCount = commentCount
         self.recordID = recordID
         self.photo = photo
     }
     
-    init?(record: CKRecord) {
+    convenience init?(record: CKRecord) {
         guard let caption = record[PostConstants.captionKey] as? String,
-        let timestamp = record[PostConstants.timestampKey] as? Date,
-        let comments = record[PostConstants.commentsKey] as? [Comment],
+            let timestamp = record[PostConstants.timestampKey] as? Date,
+            let commentCount = record[PostConstants.commentCountKey] as? Int,
+            let comments = record[PostConstants.commentsKey] as? [Comment],
             let imageAsset = record[PostConstants.photoKey] as? CKAsset else {return nil}
         
-        self.caption = caption
-        self.timestamp = timestamp
-        self.comments = comments
-        self.recordID = record.recordID
+        guard let photoData = try? Data(contentsOf: imageAsset.fileURL!),
+         let photo = UIImage(data: photoData) else {return nil}
         
-        do {
-            try self.photoData = Data(contentsOf: imageAsset.fileURL!)
-        } catch {
-            print("error ⏹")
-        }
-       
+        self.init(photo: photo, caption: caption, timestamp: timestamp, comments: comments, commentCount: commentCount, recordID: record.recordID)
     }
+
+//    init?(record: CKRecord) {
+//        guard let caption = record[PostConstants.captionKey] as? String,
+//        let timestamp = record[PostConstants.timestampKey] as? Date,
+//        let comments = record[PostConstants.commentsKey] as? [Comment],
+//            let imageAsset = record[PostConstants.photoKey] as? CKAsset else {return nil}
+//
+//        self.caption = caption
+//        self.timestamp = timestamp
+//        self.comments = comments
+//        self.recordID = record.recordID
+//
+//        do {
+//            try self.photoData = Data(contentsOf: imageAsset.fileURL!)
+//        } catch {
+//            print("error ⏹")
+//        }
     
     var imageAsset: CKAsset? {
         get {
@@ -95,6 +108,7 @@ struct PostConstants {
     fileprivate static var timestampKey = "Timestamp"
     fileprivate static var commentsKey = "Comments"
     fileprivate static var photoKey = "Photo"
+    fileprivate static var commentCountKey = "CommentCount"
 }
 
 extension CKRecord {
@@ -102,6 +116,7 @@ extension CKRecord {
         self.init(recordType: PostConstants.typeKey, recordID: post.recordID)
         self.setValue(post.caption, forKey: PostConstants.captionKey)
         self.setValue(post.comments, forKey: PostConstants.commentsKey)
+        self.setValue(post.commentCount, forKey: PostConstants.commentCountKey)
         self.setValue(post.timestamp, forKey: PostConstants.timestampKey)
         self.setValue(post.imageAsset, forKey: PostConstants.photoKey)
     }
