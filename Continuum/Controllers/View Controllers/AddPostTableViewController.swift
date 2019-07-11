@@ -10,22 +10,25 @@ import UIKit
 
 class AddPostTableViewController: UITableViewController {
     
-    
-    @IBOutlet weak var selectImageButton: UIButton!
     @IBOutlet weak var captionTextField: UITextField!
-    @IBOutlet weak var imageView: UIImageView!
     
     var selectedImage: UIImage?
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        super.viewDidLoad()        
+        
+        let label = UILabel()
+        label.text = "Pseudogram"
+        label.font = UIFont(name: "TOMATOES", size: 30)
+        label.textColor = #colorLiteral(red: 0.9607843161, green: 0.7058823705, blue: 0.200000003, alpha: 1)
+        label.textAlignment = .center
+        label.sizeToFit()
+        navigationItem.titleView = label
         
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        selectImageButton.setTitle("Select Image", for: .normal)
-        imageView.image = nil
         captionTextField.text = ""
     }
     
@@ -33,18 +36,17 @@ class AddPostTableViewController: UITableViewController {
         self.tabBarController?.selectedIndex = 0
     }
     
-    @IBAction func imageButtonTapped(_ sender: Any) {
-        selectImageButton.setTitle("", for: .normal)
-        imageView.image = UIImage(named: "spaceEmptyState")
+    @IBAction func addPostButtonTapped(_ sender: Any) {
+        guard let photo = selectedImage,
+            let caption = captionTextField.text else { return }
+        PostController.sharedInstance.createPostWith(image: photo, caption: caption) { (post) in }
+        self.tabBarController?.selectedIndex = 0
     }
     
-    @IBAction func addPostButtonTapped(_ sender: Any) {
-        guard let caption = captionTextField.text else {return}
-        if imageView.image != nil {
-            guard let photo = imageView.image else {return}
-            PostController.sharedInstance.createPostWith(image: photo, caption: caption) { (post) in
-            }
-            self.tabBarController?.selectedIndex = 0
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "containerSegue" {
+            let destinationVC = segue.destination as? PhotoSelectorViewController
+            destinationVC?.delegate = self
         }
     }
     
@@ -52,3 +54,14 @@ class AddPostTableViewController: UITableViewController {
         return 1
     }
 }
+
+extension AddPostTableViewController: AddPostTableViewControllerDelegate {
+    func addPostTableViewControllerSelected(image: UIImage) {
+        selectedImage = image
+    }
+}
+
+protocol SearchableRecord {
+    func matchesSearchTerm(searchTerm: String) -> Bool
+}
+

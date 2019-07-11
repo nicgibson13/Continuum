@@ -17,7 +17,6 @@ class PostDetailTableViewController: UITableViewController, UITextFieldDelegate 
         }
     }
     
-    
     @IBOutlet weak var photoImageView: UIImageView!
     
     override func viewDidLoad() {
@@ -55,6 +54,11 @@ class PostDetailTableViewController: UITableViewController, UITextFieldDelegate 
     }
     
     @IBAction func shareButtonTapped(_ sender: Any) {
+        guard let photo = postLandingPad?.photo,
+        let caption = postLandingPad?.caption else { return }
+        let items: [Any] = [photo, caption]
+        let shareAlert = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        present(shareAlert, animated: true, completion: nil)
         
     }
     
@@ -82,3 +86,4 @@ class PostDetailTableViewController: UITableViewController, UITextFieldDelegate 
         return cell
     }
 }
+

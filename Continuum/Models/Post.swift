@@ -9,7 +9,8 @@
 import Foundation
 import UIKit
 
-class Post {
+class Post: SearchableRecord {
+    
     var caption: String
     var timestamp: Date
     var comments: [Comment]
@@ -32,9 +33,27 @@ class Post {
         self.comments = comments
         self.photo = photo
     }
+    
+    func matchesSearchTerm(searchTerm: String) -> Bool {
+        if caption.lowercased().contains(searchTerm.lowercased()) {
+            return true
+        } else {
+            for comment in comments {
+                if comment.text.lowercased().contains(searchTerm.lowercased()) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 }
 
-class Comment {
+class Comment: SearchableRecord {
+    
+    func matchesSearchTerm(searchTerm: String) -> Bool {
+        return text == searchTerm ? true : false
+    }
+    
     var text: String
     var timestamp: Date
     weak var post: Post?
