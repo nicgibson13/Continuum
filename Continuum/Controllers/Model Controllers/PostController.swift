@@ -23,9 +23,20 @@ class PostController {
     // CRUD Functions
     
     // Create
-    func createComment(text: String, post: Post, completion: @escaping (Comment) -> Void) {
+    func createComment(text: String, post: Post, completion: @escaping (Comment?) -> Void) {
         let comment = Comment(text: text, post: post)
         post.comments.append(comment)
+        let record = CKRecord(comment: comment)
+        publicDB.save(record) { (record, error) in
+            if let error = error {
+                print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            guard let record = record else { completion (nil) ; return }
+            let comment = Comment(record: record, post: post)
+            completion(comment)
+        }
     }
     
     func createPostWith(image: UIImage, caption: String, completion: @escaping (Post?) -> Void) {
@@ -45,9 +56,41 @@ class PostController {
     }
     
     // Read
-    
-    // Update
-    
-    // Delete
-    
+    func fetchPosts(completion: @escaping ([Post]?) -> Void) {
+        let predicate = NSPredicate(value: true)
+        let query = CKQuery(recordType: PostConstants.typeKey, predicate: predicate)
+        publicDB.perform(query, inZoneWith: nil) { (records, error) in
+            if let error = error {
+                print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
+                completion(nil)
+            }
+            guard let records = records else {return}
+            let posts = records.compactMap{Post(record: $0)}
+            self.posts = posts
+            completion(posts)
+        }
+    }
+    func fetchComments(for post: Post, completion: @escaping ([Comment]?) -> Void) {
+        let postReference = post.recordID
+        let predicate = NSPredicate(format: "%K == %@", CommentConstants.postReferenceKey, postReference)
+        let commentIDs = post.comments.compactMap({$0.recordID})
+        let predicate2 = NSPredicate(format: "NOT(recordID in %@", commentIDs)
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate,predicate2])
+        let query = CKQuery(recordType: CommentConstants.typeKey, predicate: compoundPredicate)
+        publicDB.perform(query, inZoneWith: nil) { (record, error) in
+            if let error = error {
+                print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
+                completion(nil)
+            }
+            guard let records = record else {return}
+            let comments = records.compactMap{Comment(record: $0, post: post)}
+            post.comments.append(contentsOf: comments)
+            completion(comments)
+        }
+        
+        // Update
+        
+        // Delete
+        
+    }
 }

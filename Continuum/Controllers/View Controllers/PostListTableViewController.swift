@@ -16,7 +16,6 @@ class PostListTableViewController: UITableViewController {
         return isSearching ? resultsArray : PostController.sharedInstance.posts
     }
     
-    
     @IBOutlet weak var searchBar: UISearchBar!
     
     override func viewDidLoad() {
@@ -31,6 +30,17 @@ class PostListTableViewController: UITableViewController {
         tableView.reloadData()
     }
 
+    func requestSync(completion:((Bool) -> Void)?) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        PostController.sharedInstance.fetchPosts { (posts) in
+            DispatchQueue.main.async {
+                UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                self.tableView.reloadData()
+                completion?(posts != nil)
+            }
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count
     }
