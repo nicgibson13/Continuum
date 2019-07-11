@@ -30,6 +30,7 @@ class AddPostTableViewController: UITableViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         captionTextField.text = ""
+        
     }
     
     @IBAction func cancelButtonTapped(_ sender: Any) {
@@ -40,6 +41,7 @@ class AddPostTableViewController: UITableViewController {
         guard let photo = selectedImage,
             let caption = captionTextField.text else { return }
         PostController.sharedInstance.createPostWith(image: photo, caption: caption) { (post) in }
+        self.selectedImage = nil
         self.tabBarController?.selectedIndex = 0
     }
     

@@ -38,7 +38,7 @@ class PostDetailTableViewController: UITableViewController, UITextFieldDelegate 
             guard let comment = alertController.textFields?.first?.text,
                 let post = self.postLandingPad else {return}
             if comment != "" {
-                PostController.sharedInstance.addComment(text: comment, post: post, completion: { (comment) in
+                PostController.sharedInstance.createComment(text: comment, post: post, completion: { (comment) in
                 })
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
@@ -56,8 +56,7 @@ class PostDetailTableViewController: UITableViewController, UITextFieldDelegate 
     @IBAction func shareButtonTapped(_ sender: Any) {
         guard let photo = postLandingPad?.photo,
         let caption = postLandingPad?.caption else { return }
-        let items: [Any] = [photo, caption]
-        let shareAlert = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        let shareAlert = UIActivityViewController(activityItems: [photo, caption], applicationActivities: nil)
         present(shareAlert, animated: true, completion: nil)
         
     }

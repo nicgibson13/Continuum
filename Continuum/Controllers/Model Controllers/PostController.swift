@@ -8,6 +8,9 @@
 
 import Foundation
 import UIKit
+import CloudKit
+
+let publicDB = CKContainer.default().publicCloudDatabase
 
 class PostController {
     
@@ -20,7 +23,7 @@ class PostController {
     // CRUD Functions
     
     // Create
-    func addComment(text: String, post: Post, completion: @escaping (Comment) -> Void) {
+    func createComment(text: String, post: Post, completion: @escaping (Comment) -> Void) {
         let comment = Comment(text: text, post: post)
         post.comments.append(comment)
     }
@@ -28,6 +31,17 @@ class PostController {
     func createPostWith(image: UIImage, caption: String, completion: @escaping (Post?) -> Void) {
         let post = Post(photo: image, caption: caption)
         posts.append(post)
+        let record = CKRecord(post: post)
+        publicDB.save(record) { (record, error) in
+            if let error = error {
+                print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            guard let record = record,
+                let post = Post(record: record) else { completion (nil) ; return }
+            completion(post)
+        }
     }
     
     // Read

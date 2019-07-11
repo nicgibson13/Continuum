@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C6F811422D7B6A0005B38CF /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C6F811322D7B6A0005B38CF /* CloudKit.framework */; };
 		7C7E631222D53269006E4672 /* PostListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C7E631122D53269006E4672 /* PostListTableViewController.swift */; };
 		7C7E631422D532D7006E4672 /* PostDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C7E631322D532D7006E4672 /* PostDetailTableViewController.swift */; };
 		7C7E631622D53330006E4672 /* AddPostTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C7E631522D53330006E4672 /* AddPostTableViewController.swift */; };
@@ -16,6 +17,8 @@
 		7C7E632022D550F5006E4672 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C7E631F22D550F5006E4672 /* DateFormatter.swift */; };
 		7C7E632522D6339F006E4672 /* TOMATOES Personal Use.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E632422D6339F006E4672 /* TOMATOES Personal Use.ttf */; };
 		7C7E632F22D69D25006E4672 /* PhotoSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C7E632E22D69D25006E4672 /* PhotoSelectorViewController.swift */; };
+		7CA46B0922D79AFF003DE7F9 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA46B0822D79AFF003DE7F9 /* Comment.swift */; };
+		7CA46B0B22D7ACD5003DE7F9 /* UIViewControllerExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA46B0A22D7ACD5003DE7F9 /* UIViewControllerExtensionViewController.swift */; };
 		7CEBD68E22D53131009B3133 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEBD68D22D53131009B3133 /* AppDelegate.swift */; };
 		7CEBD69322D53131009B3133 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7CEBD69122D53131009B3133 /* Main.storyboard */; };
 		7CEBD69522D53131009B3133 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7CEBD69422D53131009B3133 /* Assets.xcassets */; };
@@ -23,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7C6F811122D7B69E005B38CF /* Continuum.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Continuum.entitlements; sourceTree = "<group>"; };
+		7C6F811322D7B6A0005B38CF /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		7C7E631122D53269006E4672 /* PostListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListTableViewController.swift; sourceTree = "<group>"; };
 		7C7E631322D532D7006E4672 /* PostDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailTableViewController.swift; sourceTree = "<group>"; };
 		7C7E631522D53330006E4672 /* AddPostTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPostTableViewController.swift; sourceTree = "<group>"; };
@@ -32,6 +37,8 @@
 		7C7E631F22D550F5006E4672 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		7C7E632422D6339F006E4672 /* TOMATOES Personal Use.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "TOMATOES Personal Use.ttf"; path = "../../../../../../../../Downloads/billy-argel_tomatoes/TOMATOES Personal Use.ttf"; sourceTree = "<group>"; };
 		7C7E632E22D69D25006E4672 /* PhotoSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorViewController.swift; sourceTree = "<group>"; };
+		7CA46B0822D79AFF003DE7F9 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		7CA46B0A22D7ACD5003DE7F9 /* UIViewControllerExtensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UIViewControllerExtensionViewController.swift; path = "../Controllers/View Controllers/UIViewControllerExtensionViewController.swift"; sourceTree = "<group>"; };
 		7CEBD68A22D53131009B3133 /* Continuum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Continuum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CEBD68D22D53131009B3133 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7CEBD69222D53131009B3133 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -45,12 +52,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C6F811422D7B6A0005B38CF /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7C6F811222D7B6A0005B38CF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7C6F811322D7B6A0005B38CF /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7C7E630E22D53229006E4672 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				7C7E631822D533DB006E4672 /* Post.swift */,
+				7CA46B0822D79AFF003DE7F9 /* Comment.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -91,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				7C7E631F22D550F5006E4672 /* DateFormatter.swift */,
+				7CA46B0A22D7ACD5003DE7F9 /* UIViewControllerExtensionViewController.swift */,
 			);
 			path = "Entitlements + Helpers";
 			sourceTree = "<group>";
@@ -108,6 +126,7 @@
 			children = (
 				7CEBD68C22D53131009B3133 /* Continuum */,
 				7CEBD68B22D53131009B3133 /* Products */,
+				7C6F811222D7B6A0005B38CF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -122,6 +141,7 @@
 		7CEBD68C22D53131009B3133 /* Continuum */ = {
 			isa = PBXGroup;
 			children = (
+				7C6F811122D7B69E005B38CF /* Continuum.entitlements */,
 				7C7E631E22D550DC006E4672 /* Entitlements + Helpers */,
 				7C7E631722D533CC006E4672 /* Models */,
 				7C7E630E22D53229006E4672 /* Controllers */,
@@ -184,6 +204,14 @@
 				TargetAttributes = {
 					7CEBD68922D53131009B3133 = {
 						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -224,11 +252,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CA46B0B22D7ACD5003DE7F9 /* UIViewControllerExtensionViewController.swift in Sources */,
 				7C7E632F22D69D25006E4672 /* PhotoSelectorViewController.swift in Sources */,
 				7C7E632022D550F5006E4672 /* DateFormatter.swift in Sources */,
 				7C7E631D22D53BD5006E4672 /* PostTableViewCell.swift in Sources */,
 				7CEBD68E22D53131009B3133 /* AppDelegate.swift in Sources */,
 				7C7E631222D53269006E4672 /* PostListTableViewController.swift in Sources */,
+				7CA46B0922D79AFF003DE7F9 /* Comment.swift in Sources */,
 				7C7E631622D53330006E4672 /* AddPostTableViewController.swift in Sources */,
 				7C7E631422D532D7006E4672 /* PostDetailTableViewController.swift in Sources */,
 				7C7E631922D533DB006E4672 /* Post.swift in Sources */,
@@ -378,6 +408,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Continuum/Continuum.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2HLC2FMZN4;
 				INFOPLIST_FILE = "$(SRCROOT)/Continuum/Resources/Info.plist";
@@ -396,6 +427,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Continuum/Continuum.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2HLC2FMZN4;
 				INFOPLIST_FILE = "$(SRCROOT)/Continuum/Resources/Info.plist";

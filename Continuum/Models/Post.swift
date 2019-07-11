@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CloudKit
 
 class Post: SearchableRecord {
     
@@ -15,6 +16,7 @@ class Post: SearchableRecord {
     var timestamp: Date
     var comments: [Comment]
     var photoData: Data?
+    var recordID: CKRecord.ID
     var photo: UIImage? {
         get {
             guard let photoData = photoData else
@@ -27,11 +29,50 @@ class Post: SearchableRecord {
         }
     }
     
-    init(photo: UIImage, caption: String, timestamp: Date = Date(), comments: [Comment] = []) {
+    init(photo: UIImage, caption: String, timestamp: Date = Date(), comments: [Comment] = [], recordID: CKRecord.ID = CKRecord.ID(recordName: UUID().uuidString)) {
         self.caption = caption
         self.timestamp = timestamp
         self.comments = comments
+        self.recordID = recordID
         self.photo = photo
+    }
+    
+    init?(record: CKRecord) {
+        guard let caption = record[PostConstants.captionKey] as? String,
+        let timestamp = record[PostConstants.timestampKey] as? Date,
+        let comments = record[PostConstants.commentsKey] as? [Comment],
+            let imageAsset = record[PostConstants.photoKey] as? CKAsset else {return nil}
+        
+        self.caption = caption
+        self.timestamp = timestamp
+        self.comments = comments
+        self.recordID = record.recordID
+        
+        do {
+            try self.photoData = Data(contentsOf: imageAsset.fileURL!)
+        } catch {
+            print("error ⏹")
+        }
+       
+    }
+    
+    var imageAsset: CKAsset? {
+        get {
+            // Declare temp local storage
+            let tempDirectory = NSTemporaryDirectory()
+            // Create file url
+            let tempDirectoryURL = URL(fileURLWithPath: tempDirectory)
+            // create filepath
+            let fileURL = tempDirectoryURL.appendingPathComponent(UUID().uuidString).appendingPathExtension("jpg")
+            do {
+                // write the photo data to the file
+                try photoData?.write(to: fileURL)
+            } catch let error {
+                print("Error writing to temp URL \(error) \(error.localizedDescription)")
+            }
+            // package the file into a CKAsset
+            return CKAsset(fileURL: fileURL)
+        }
     }
     
     func matchesSearchTerm(searchTerm: String) -> Bool {
@@ -48,19 +89,20 @@ class Post: SearchableRecord {
     }
 }
 
-class Comment: SearchableRecord {
-    
-    func matchesSearchTerm(searchTerm: String) -> Bool {
-        return text == searchTerm ? true : false
-    }
-    
-    var text: String
-    var timestamp: Date
-    weak var post: Post?
-    
-    init(text: String, timestamp: Date = Date(), post: Post?) {
-        self.text = text
-        self.timestamp = timestamp
-        self.post = post
+struct PostConstants {
+    static let typeKey = "Post"
+    fileprivate static var captionKey = "Caption"
+    fileprivate static var timestampKey = "Timestamp"
+    fileprivate static var commentsKey = "Comments"
+    fileprivate static var photoKey = "Photo"
+}
+
+extension CKRecord {
+    convenience init(post: Post) {
+        self.init(recordType: PostConstants.typeKey, recordID: post.recordID)
+        self.setValue(post.caption, forKey: PostConstants.captionKey)
+        self.setValue(post.comments, forKey: PostConstants.commentsKey)
+        self.setValue(post.timestamp, forKey: PostConstants.timestampKey)
+        self.setValue(post.imageAsset, forKey: PostConstants.photoKey)
     }
 }
