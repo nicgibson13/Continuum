@@ -10,25 +10,27 @@ import UIKit
 
 class PostListTableViewController: UITableViewController {
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     var isSearching: Bool = false
     var resultsArray: [Post] = []
     var dataSource: [Post] {
         return isSearching ? resultsArray : PostController.sharedInstance.posts
     }
     
-    @IBOutlet weak var searchBar: UISearchBar!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        requestSync(completion: nil)
         searchBar.delegate = self
+        requestSync(completion: nil)
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        resultsArray = PostController.sharedInstance.posts
-        tableView.reloadData()
+        DispatchQueue.main.async {
+            self.resultsArray = PostController.sharedInstance.posts
+            self.tableView.reloadData()
+        }
     }
 
     func requestSync(completion:((Bool) -> Void)?) {

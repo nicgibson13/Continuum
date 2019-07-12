@@ -43,24 +43,25 @@ class Post: SearchableRecord {
         guard let caption = record[PostConstants.captionKey] as? String,
             let timestamp = record[PostConstants.timestampKey] as? Date,
             let commentCount = record[PostConstants.commentCountKey] as? Int,
-            let comments = record[PostConstants.commentsKey] as? [Comment],
             let imageAsset = record[PostConstants.photoKey] as? CKAsset else {return nil}
-        
+
         guard let photoData = try? Data(contentsOf: imageAsset.fileURL!),
          let photo = UIImage(data: photoData) else {return nil}
-        
-        self.init(photo: photo, caption: caption, timestamp: timestamp, comments: comments, commentCount: commentCount, recordID: record.recordID)
+
+        self.init(photo: photo, caption: caption, timestamp: timestamp, commentCount: commentCount, recordID: record.recordID)
     }
 
 //    init?(record: CKRecord) {
 //        guard let caption = record[PostConstants.captionKey] as? String,
 //        let timestamp = record[PostConstants.timestampKey] as? Date,
 //        let comments = record[PostConstants.commentsKey] as? [Comment],
+//            let commentCount = record[PostConstants.commentCountKey] as? Int,
 //            let imageAsset = record[PostConstants.photoKey] as? CKAsset else {return nil}
 //
 //        self.caption = caption
 //        self.timestamp = timestamp
 //        self.comments = comments
+//        self.commentCount = commentCount
 //        self.recordID = record.recordID
 //
 //        do {
@@ -68,7 +69,7 @@ class Post: SearchableRecord {
 //        } catch {
 //            print("error ⏹")
 //        }
-    
+//    }
     var imageAsset: CKAsset? {
         get {
             // Declare temp local storage
@@ -115,7 +116,6 @@ extension CKRecord {
     convenience init(post: Post) {
         self.init(recordType: PostConstants.typeKey, recordID: post.recordID)
         self.setValue(post.caption, forKey: PostConstants.captionKey)
-        self.setValue(post.comments, forKey: PostConstants.commentsKey)
         self.setValue(post.commentCount, forKey: PostConstants.commentCountKey)
         self.setValue(post.timestamp, forKey: PostConstants.timestampKey)
         self.setValue(post.imageAsset, forKey: PostConstants.photoKey)

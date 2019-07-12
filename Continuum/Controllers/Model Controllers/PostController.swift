@@ -10,12 +10,17 @@ import Foundation
 import UIKit
 import CloudKit
 
-let publicDB = CKContainer.default().publicCloudDatabase
 
 class PostController {
     
+    let publicDB = CKContainer.default().publicCloudDatabase
+    
     //Singleton
     static let sharedInstance = PostController()
+    
+    private init() {
+        subscribeToNewPosts(completion: nil)
+    }
     
     // S. O. T.
     var posts: [Post] = []
@@ -76,10 +81,11 @@ class PostController {
     func fetchPosts(completion: @escaping ([Post]?) -> Void) {
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: PostConstants.typeKey, predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil) { (records, error) in
+        CKContainer.default().publicCloudDatabase.perform(query, inZoneWith: nil) { (records, error) in
             if let error = error {
                 print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
                 completion(nil)
+                return
             }
             guard let records = records else {return}
             let posts = records.compactMap{Post(record: $0)}
@@ -91,15 +97,16 @@ class PostController {
         let postReference = post.recordID
         let predicate = NSPredicate(format: "%K == %@", CommentConstants.postReferenceKey, postReference)
         let commentIDs = post.comments.compactMap({$0.recordID})
-        let predicate2 = NSPredicate(format: "NOT(recordID in %@", commentIDs)
+        let predicate2 = NSPredicate(format: "NOT(recordID IN %@)", commentIDs)
         let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate,predicate2])
         let query = CKQuery(recordType: CommentConstants.typeKey, predicate: compoundPredicate)
         publicDB.perform(query, inZoneWith: nil) { (record, error) in
             if let error = error {
                 print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
                 completion(nil)
+                return
             }
-            guard let records = record else {return}
+            guard let records = record else {completion(nil) ; return}
             let comments = records.compactMap{Comment(record: $0, post: post)}
             post.comments.append(contentsOf: comments)
             completion(comments)
@@ -109,5 +116,93 @@ class PostController {
         
         // Delete
         
+    }
+    
+    func subscribeToNewPosts(completion: ((Bool, Error?) -> Void)?) {
+        let predicate = NSPredicate(value: true)
+        let subscription = CKQuerySubscription(recordType: PostConstants.typeKey, predicate: predicate, subscriptionID: "AllPosts", options: CKQuerySubscription.Options.firesOnRecordCreation)
+        publicDB.save(subscription) { (subscription, error) in
+            if let error = error {
+                print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
+                completion?(false, error)
+            } else {
+                completion?(true, nil)
+            }
+        }
+    }
+    
+    func addSubscriptionTo(commentsForPost post: Post, completion: ((Bool, Error?) -> Void)?) {
+        let postRecordID = post.recordID
+        let predicate = NSPredicate(format: "%K == %@", CommentConstants.postReferenceKey, postRecordID)
+        let subscription = CKQuerySubscription(recordType: CommentConstants.typeKey, predicate: predicate, subscriptionID: post.recordID.recordName, options: CKQuerySubscription.Options.firesOnRecordCreation)
+        let notification = CKSubscription.NotificationInfo()
+        notification.alertBody = "A new comment was added to a post you follow"
+        notification.shouldSendContentAvailable = true
+        notification.desiredKeys = nil
+        subscription.notificationInfo = notification
+        
+        publicDB.save(subscription) { (subscription, error) in
+            if let error = error {
+                print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
+                completion?(false, error)
+            }
+            completion?(true, nil)
+        }
+    }
+    
+    func removeSubscriptionTo(commentsForPost post: Post, completion: ((Bool) -> Void)?) {
+        let subID = post.recordID.recordName
+        publicDB.delete(withSubscriptionID: subID) { (_, error) in
+            if let error = error {
+                print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
+                completion?(false)
+                return
+            } else {
+                completion?(true)
+            }
+        }
+    }
+    
+    func checkSubscription(to post: Post, completion: ((Bool) -> Void)?) {
+        let subID = post.recordID.recordName
+        publicDB.fetch(withSubscriptionID: subID) { (_, error) in
+            if let error = error {
+                print("There was an error in \(#function) : \(error) : \(error.localizedDescription)")
+                completion?(false)
+            } else {
+                completion?(true)
+            }
+        }
+    }
+    
+    func toggleSubscriptionTo(commentsForPost post: Post, completion: ((Bool, Error?) -> Void)?) {
+        checkSubscription(to: post) { (isSubscribed) in
+            if isSubscribed {
+                self.removeSubscriptionTo(commentsForPost: post, completion: { (success) in
+                    if success {
+                        print("Unsubbed!")
+                        completion?(true, nil)
+                    } else {
+                        print("Couldn't unsub :(")
+                        completion?(false, nil)
+                    }
+                })
+            } else {
+                self.addSubscriptionTo(commentsForPost: post, completion: { (success, error) in
+                    if let error = error {
+                        print("\(error.localizedDescription)")
+                        completion?(false, error)
+                        return
+                    }
+                    if success{
+                        print("Successfully added the subscription to the post with caption: \(post.caption)")
+                        completion?(true, nil)
+                    }else{
+                        print("Whoops somthing went wrong adding the subscription to the post with caption: \(post.caption)")
+                        completion?(false, nil)
+                    }
+                })
+            }
+        }
     }
 }

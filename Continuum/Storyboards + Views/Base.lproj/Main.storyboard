@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -252,6 +253,7 @@
                                                     <rect key="frame" x="280" y="6" width="134" height="30"/>
                                                     <state key="normal" title="Follow Post"/>
                                                     <connections>
+                                                        <action selector="followButton:" destination="o0S-kX-P22" eventType="touchUpInside" id="k25-Sm-H1U"/>
                                                         <action selector="followPostButtonTapped:" destination="o0S-kX-P22" eventType="touchUpInside" id="gF3-KI-60c"/>
                                                     </connections>
                                                 </button>
@@ -302,6 +304,7 @@
                         </connections>
                     </tableView>
                     <connections>
+                        <outlet property="followButtonTapped" destination="Cw1-7I-VB9" id="O41-RT-ayb"/>
                         <outlet property="photoImageView" destination="IyQ-Pt-FtP" id="nEd-iM-w9d"/>
                     </connections>
                 </tableViewController>
@@ -378,6 +381,7 @@
                             <constraint firstItem="nR3-w8-Pmy" firstAttribute="leading" secondItem="LhX-82-6L5" secondAttribute="leading" id="kHS-0f-XHr"/>
                             <constraint firstAttribute="trailing" secondItem="nR3-w8-Pmy" secondAttribute="trailing" id="rrn-fI-W0H"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="B56-4z-GBe"/>
                     </view>
                     <connections>
                         <outlet property="buttonOutlet" destination="huM-TW-TO0" id="LDg-zc-4I3"/>
